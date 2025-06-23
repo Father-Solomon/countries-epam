@@ -1,39 +1,44 @@
-
 <div class="countries-form-wrapper">
   <div class="form-container">
     <mat-form-field appearance="outline" style="width: 100%;">
       <mat-label>Select Region</mat-label>
-      <mat-select #regionSelect [value]="selectedRegion()" (valueChange)="selectedRegion.set($event)">
+      <mat-select
+        #regionSelect
+        [value]="selectedRegion()"
+        (valueChange)="selectedRegion.set($event)">
+        @if (selectedRegion()) {
+          <mat-option [value]="null">— Deselect Regions —</mat-option>
+        }
         @for (region of regions(); track region) {
           <mat-option [value]="region">{{ region }}</mat-option>
         }
         @if (isLoading()) {
           <mat-option disabled>Loading more...</mat-option>
         }
-
       </mat-select>
     </mat-form-field>
 
     @if (selectedRegion()) {
-      <p >Selected Region: <strong>{{ selectedRegion() }}</strong></p>
+      <p>Selected Region: <strong>{{ selectedRegion() }}</strong></p>
     }
   </div>
+
   <div class="form-container">
-      <mat-form-field appearance="outline" style="width: 100%;">
-        <mat-label>Select Country</mat-label>
-        <mat-select #regionSelect [value]="selectedRegion()" (valueChange)="selectedRegion.set($event)">
-          @for (region of regions(); track region) {
-            <mat-option [value]="region">{{ region }}</mat-option>
-          }
-          @if (isLoading()) {
-            <mat-option disabled>Loading more...</mat-option>
-          }
+    <mat-form-field appearance="outline" style="width: 100%;">
+      <mat-label>Select Country</mat-label>
+      <mat-select
+        [value]="selectedCountryCode()"
+        (valueChange)="selectedCountryCode.set($event)"
+        [disabled]="!selectedRegion()"
+      >
+        @for (country of countriesByRegion(); track country.code) {
+          <mat-option [value]="country.code">{{ country.country }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
 
-        </mat-select>
-      </mat-form-field>
-
-      @if (selectedRegion()) {
-        <p >Selected Region: <strong>{{ selectedRegion() }}</strong></p>
-      }
+    @if (selectedCountryName()) {
+      <p>Selected Country: <strong>{{ selectedCountryName() }}</strong></p>
+    }
   </div>
 </div>

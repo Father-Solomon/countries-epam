@@ -1,5 +1,5 @@
 import {inject, Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {Country} from '../interfaces/country';
 import {map} from 'rxjs';
 
@@ -9,19 +9,26 @@ import {map} from 'rxjs';
 export class CountryService {
   private http = inject(HttpClient);
 
-  getCountriesChunk(offset: number) {
+  getCountries(options?: { offset?: number; limit?: number; region?: string }) {
+    const params = new HttpParams({
+      fromObject: {
+        ...(options?.offset != null && { offset: options.offset.toString() }),
+        ...(options?.limit != null && { limit: options.limit.toString() }),
+        ...(options?.region && { region: options.region })
+      }
+    });
+
     return this.http.get<{
-      total: number;
+      total?: number;
       data: Record<string, Omit<Country, 'code'>>;
-    }>(`https://api.first.org/data/v1/countries?offset=${offset}&limit=100`)
-      .pipe(
-        map(res => ({
-          total: res.total,
-          countries: Object.entries(res.data).map(([code, val]) => ({
-            code,
-            ...val,
-          }))
+    }>('https://api.first.org/data/v1/countries', { params }).pipe(
+      map(res => ({
+        total: res.total ?? 0,
+        countries: Object.entries(res.data).map(([code, val]) => ({
+          code,
+          ...val
         }))
-      );
+      }))
+    );
   }
 }
