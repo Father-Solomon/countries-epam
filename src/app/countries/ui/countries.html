@@ -1,0 +1,22 @@
+
+<div class="countries-form-wrapper">
+  <div class="form-container">
+    <mat-form-field appearance="outline" style="width: 100%;">
+      <mat-label>Select Region</mat-label>
+      <mat-select #regionSelect [value]="selectedRegion()" (valueChange)="selectedRegion.set($event)">
+        @for (region of regions(); track region) {
+          <mat-option [value]="region">{{ region }}</mat-option>
+        }
+        @if (isLoading()) {
+          <mat-option disabled>Loading more...</mat-option>
+        }
+
+      </mat-select>
+    </mat-form-field>
+
+    @if (selectedRegion()) {
+      <p >Selected Region: <strong>{{ selectedRegion() }}</strong></p>
+    }
+  </div>
+  <div class="form-container"></div>
+</div>
